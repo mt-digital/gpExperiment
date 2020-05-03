@@ -38,6 +38,7 @@ class CoordinationChatroom(Experiment):
         self.experiment_repeats = repeats = config.get("repeats")
         self.network_class = config.get("network")
         self.quorum = config.get("n")
+
         # Recruit for all networks at once
         self.initial_recruitment_size = repeats * self.quorum
 

@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block body %}
+    {{ super() }}
+    <div class="main_div">
+        <div class="row question">
+            <div class="col-md-8">
+                <p id="question">
+                    
+                </p>
+            </div>
+            <div class="col-md-4">
+                <select id="engagement" name="engagement">
+                    <option value="10">10 - Very engaged</option>
+                    <option value="9">9</option>
+                    <option value="8">8</option>
+                    <option value="7">7</option>
+                    <option value="6">6</option>
+                    <option value="5" SELECTED>5 - Moderately engaged</option>
+                    <option value="4">4</option>
+                    <option value="3">3</option>
+                    <option value="2">2</option>
+                    <option value="1">1 - Not engaged</option>
+                </select>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script src="/static/scripts/survey_question.js" type="text/javascript"></script>
+{% endblock %}

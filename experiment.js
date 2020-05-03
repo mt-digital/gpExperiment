@@ -18,7 +18,6 @@ var create_agent = function () {
       // A 403 is our signal that it's time to go to the questionnaire
       if (rejection.status === 403) {
         dallinger.allowExit();
-        // dallinger.goToPage('questionnaire');
         dallinger.goToPage('questionnaire');
       } else {
         dallinger.error(rejection);
@@ -43,24 +42,20 @@ var display_info = function(info_id) {
   dallinger.getInfo(my_node_id, info_id)
     .done(function (resp) {
       console.log(resp.info.contents);
-      $("#story").append("<p>" + resp.info.origin_id + ': ' + resp.info.contents + "</p>");
+      $("#story").append("<p>" + resp.origin_id + ': ' + resp.info.contents + "</p>");
     });
 };
 
 var send_message = function() {
-
   $("#send-message").addClass("disabled");
   $("#send-message").html("Sending...");
 
   response = $("#reproduction").val();
   $("#reproduction").val("");
-
   var myId = dallinger.identity.participantId;
-
   $("#story").append("<p style='color: #1693A5;'>" + "Me: " + response + "</p>");
   $("#reproduction").focus();
 
-  // Create a new Info object based on latest statement and POST it to server.
   dallinger.createInfo(my_node_id, {
     contents: response,
     info_type: "Info"
