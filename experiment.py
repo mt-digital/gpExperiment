@@ -1,6 +1,8 @@
 """Chatroom game."""
 
 import logging
+import random
+
 from dallinger import networks
 from dallinger.compat import unicode
 from dallinger.config import get_config
@@ -20,6 +22,7 @@ logger = logging.getLogger(__file__)
 def extra_parameters():
     config = get_config()
     config.register("network", unicode)
+    config.register("question", unicode)
     config.register("repeats", int)
     config.register("n", int)
 
@@ -41,6 +44,8 @@ class CoordinationChatroom(Experiment):
 
         # Recruit for all networks at once
         self.initial_recruitment_size = repeats * self.quorum
+
+        self.public_properties.update({'question': config.get('question')})
 
     def create_network(self):
         """Create a new network by reading the configuration file."""
