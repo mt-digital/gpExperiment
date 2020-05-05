@@ -94,7 +94,10 @@ var sendMessage = function() {
 
 
 var leaveChatroom = function() {
-  dallinger.goToPage("questionnaire");
+  location.replace(
+    "/survey_question?number=1&position=post&participant_id=" + 
+      dallinger.identity.participantId
+  );
 };
 
 

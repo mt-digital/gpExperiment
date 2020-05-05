@@ -10,6 +10,8 @@ $(document).ready(function() {
 
   var question = potentialQuestions[0];
 
+  // TODO here is where we would get the Info from server that contains the
+  // question of interest. 
   $("#question").html(question);
 
   $("#submit-answer").click(() => {
@@ -29,29 +31,53 @@ $(document).ready(function() {
     console.log(questionNumber)
     console.log(questionPosition)
       
-    // Now ready to create a participant, which must be done before we
-    // can post this participant's answer to the server, if we even need
-    // them for the opinion exchange.
-    $("#progress-container").show();
+    if (questionPosition === 'pre') {
 
-    dallinger.createParticipant().done(() => {
-      if (dallinger.skip_experiment) {
-        dallinger.allowExit();
-        $('.main_div').html(NUM_PARTS_EXCEEDED_MESSAGE);
+      /* Before submitting pre-exchange question response, we must first
+       * create a participant. 
+       */ 
 
-        $('#not-needed-exit').click(dallinger.submitAssignment);
-      } else {
-        // Post response to question and proceed to opinion exchange, currently
-        // called by its to-be-replaced placeholder 'experiment'.
-        dallinger.post("/question/" + dallinger.identity.participantId, 
-          {
-            question: question + "-" + questionPosition,
-            number: questionNumber,
-            response: answerValue
-          }
-        ).done(() => dallinger.goToPage('experiment'));
-      }
-    });
+      // Creating participant requires a quorum. It will not complete until
+      // the server receives createParticipant requests from all potential
+      // participant's browsers.
+      $("#progress-container").show();
+
+      dallinger.createParticipant().done(() => {
+
+        if (dallinger.skip_experiment) {
+
+          dallinger.allowExit();
+
+          $('.main_div').html(NUM_PARTS_EXCEEDED_MESSAGE);
+
+          $('#not-needed-exit').click(dallinger.submitAssignment);
+
+        } else {
+         
+          // Post response to question and proceed to opinion exchange, 
+          // currently called by its to-be-replaced placeholder 'experiment'.
+          dallinger.post("/question/" + dallinger.identity.participantId, 
+            {
+              question: question + "-" + questionPosition,
+              number: questionNumber,
+              response: answerValue
+            }
+          ).done(() => dallinger.goToPage('experiment'));
+        }
+      });
+
+    } else {
+
+      // If this is the post-exchange question, go to the questionnaire after
+      // submitting response.
+      dallinger.post("/question/" + dallinger.identity.participantId, 
+        {
+          question: question + "-" + questionPosition,
+          number: questionNumber,
+          response: answerValue
+        }
+      ).done(() => dallinger.goToPage('questionnaire'));
+    }
   });
 
 });
