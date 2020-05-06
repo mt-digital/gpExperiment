@@ -1,4 +1,6 @@
-/*globals $, dallinger */
+/* globals $, dallinger, util */
+
+/* exported createAgent */
 
 var MY_NODE_ID;
 
@@ -17,46 +19,48 @@ var MY_NODE_ID;
 var loadTransmissions = function(MY_NODE_ID) {
 
   // Fetch 'pending' transmissions that have not yet been requested.
-  dallinger.getTransmissions(MY_NODE_ID, { status: 'pending' })
-    .done(resp => {
-      // Iterate over transmissions received, display each one.
-      resp.transmissions.forEach(t => displayTransmission(t.info_id));
+  dallinger.getTransmissions(MY_NODE_ID, { status: 'pending' }).done(resp => {
+    
+    // Iterate over transmissions received, display each one.
+    resp.transmissions.forEach(t => displayTransmission(t.info_id));
 
-      // Repeat request-display loop every 100ms.
-      setTimeout(() => loadTransmissions(MY_NODE_ID), 100);
-    });
+    // Repeat request-display loop every 100ms.
+    setTimeout(() => loadTransmissions(MY_NODE_ID), 100);
+  });
+
 };
 
 
-// Create the agent. Called once in experiment.html.
+// Create the agent. Called once in discussion.html.
 var createAgent = function() {
 
-  dallinger.createAgent()
-    .done(resp => {
+  dallinger.createAgent().done(resp => {
 
-      $("#stimulus").show();
+    $("#stimulus").show();
 
-      $("#response-form").show();
+    $("#response-form").show();
 
-      $("#send-message").removeClass("disabled");
-      $("#send-message").html("Send");
+    $("#send-message").removeClass("disabled");
+    $("#send-message").html("Send");
 
-      $("#reproduction").focus();
+    $("#reproduction").focus();
 
-      MY_NODE_ID = resp.node.id;
+    MY_NODE_ID = resp.node.id;
 
-      loadTransmissions(MY_NODE_ID);
-    })
-    .fail(function (rejection) {
-      // A 403 is our signal that it's time to go to the questionnaire
-      if (rejection.status === 403) {
-        dallinger.allowExit();
-        // dallinger.goToPage('questionnaire');
-        dallinger.goToPage('questionnaire');
-      } else {
-        dallinger.error(rejection);
-      }
-    });
+    loadTransmissions(MY_NODE_ID);
+
+  }).fail(function (rejection) {
+
+    // A 403 is our signal that it's time to go to the questionnaire
+    if (rejection.status === 403) {
+      dallinger.allowExit();
+      // dallinger.goToPage('questionnaire');
+      // dallinger.goToPage('questionnaire');
+      util.goToPage('questionnaire');
+    } else {
+      dallinger.error(rejection);
+    }
+  });
 };
 
 
@@ -94,10 +98,11 @@ var sendMessage = function() {
 
 
 var leaveChatroom = function() {
-  location.replace(
-    "/survey_question?number=1&position=post&participant_id=" + 
-      dallinger.identity.participantId
-  );
+  // location.replace(
+  //   "/survey_question?number=1&position=post&participant_id=" + 
+  //     dallinger.identity.participantId
+  // );
+  util.goToPage("survey_question?number=1&position=post")
 };
 
 
@@ -114,7 +119,7 @@ $(document).ready(function() {
     
   // Proceed to the waiting room listener.
   $("#go-to-waiting-room").click(function() {
-    dallinger.goToPage("waiting");
+    util.goToPage("waiting");
   });
 
   // Message send listener.

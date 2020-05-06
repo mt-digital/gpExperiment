@@ -1,4 +1,4 @@
-/*globals $, dallinger */
+/* globals $, dallinger, util */
 
 var NUM_PARTS_EXCEEDED_MESSAGE = '<p>The experiment has exceeded the maximum number of participants, your participation is not required. Click the button below to complete the HIT. You will be compensated as if you had completed the task.</p><button type="button" class="button btn-success">Complete</button>';
 
@@ -60,14 +60,17 @@ $(document).ready(function() {
           } else {
            
             // Post response to question and proceed to opinion exchange, 
-            // currently called by its to-be-replaced placeholder 'experiment'.
+            // currently forced to be "discussion" but TODO we will soon
+            // be checking the config to see if this is a discussion condition,
+            // opinion exchange condition, or structured arguments condtiion,
+            // and route appropriately.
             dallinger.post("/question/" + dallinger.identity.participantId, 
               {
                 question: question + "-" + questionPosition,
                 number: questionNumber,
                 response: answerValue
               }
-            ).done(() => dallinger.goToPage('experiment'));
+            ).done(() => util.goToPage('discussion'));
           }
         });
 
