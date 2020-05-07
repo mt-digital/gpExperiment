@@ -13,16 +13,21 @@
 
 {% block body %}
 <!-- <div class="container"> -->
+ 
+<div id="main">
     
     <!-- Filled in by static/scripts/surveyQuestion.js -->
-    <div class="row"><p id="question"></p></div>
-
-
+    <div id="prompt" class="row">
+        <h4>To what extent do you disagree or agree with the following statement:</h4>
+        <p id="question"></p>
+    </div>
+    
+    
     <!-- Filled in by SurveyJS -->
     <div id="surveyElement" style="display:inline-block;width:100%;"></div>
     <!-- <div id="surveyResult"></div> -->
-
-
+    
+    
     <!-- Progress bar displayed once question is answered and quorum is
          being met 
     -->
@@ -41,10 +46,11 @@
             </div>
         </div>
     </div>
-
+    
     <button id="not-needed-exit" style="display:none" class="btn btn-danger">
         Finish participation
     </button>
+</div>
 
 <!-- </div> -->
 {% endblock %}

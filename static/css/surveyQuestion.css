@@ -1,10 +1,19 @@
-/* Hack for dealing with SurveyJS auto-creating garbage titles. */
-h5 { display: none; }
+div#main {
+  padding-top: 50px;
+  width: 90%;
+  display: block;
+  margin: 0 auto;
+}
 
-p#question { 
+div#prompt { 
   /* text-align: center; */
   margin: auto;
   width: 80%;
   display: block;
+  padding-top: 25px;
 }
 
+p#question { width: 70%; margin: 0 auto; }
+
+/* Hack for dealing with SurveyJS auto-creating garbage titles. */
+h5 { display: none; }
