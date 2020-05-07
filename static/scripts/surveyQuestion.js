@@ -1,31 +1,31 @@
-/* globals $, dallinger, util */
+/* globals $, Survey, dallinger, util */
 
 var NUM_PARTS_EXCEEDED_MESSAGE = '<p>The experiment has exceeded the maximum number of participants, your participation is not required. Click the button below to complete the HIT. You will be compensated as if you had completed the task.</p><button type="button" class="button btn-success">Complete</button>';
 
 $(document).ready(function() {
-  // var potentialQuestions = [
-  //   "How many legs does a spider have?",
-  //   "How many drops of water in the ocean?"
-  // ];
 
-  // var question = potentialQuestions[0];
   var question;
-  dallinger.getExperimentProperty("question").done(
-    r => {
-      question = r.question;
-      $("#question").html(r.question);
-  
-    // TODO here is where we would get the Info from server that contains the
-    // question of interest. 
-    $("#question").html(question);
+  dallinger.getExperimentProperty("question").done((r) => {
 
-    $("#submit-answer").click(() => {
+    question = r.question;
+    $('#question').html(question);
+    var survey = setupSurvey(question);
 
+    $('.sv_complete_btn').css({
+      "display": "block", 
+      "margin": "0 auto", 
+      "width": "50%", 
+      "color": "gainsboro",
+      "border": "none",
+    });
+
+    // $("#submit-answer").click(() => {
+    survey.onComplete.add((result) => {
+      
       // Post to question route, creating a question response for this
       // participant.
-      var answerValue = $("input[name='response']:checked").val(); 
-
-      console.log(answerValue);
+      // var answerValue = $("input[name='surveyQuestion']:checked").val(); 
+      var answerValue = result.data.surveyQuestion.value;
       
       var urlParams = new URLSearchParams(window.location.search);
 
@@ -36,6 +36,15 @@ $(document).ready(function() {
       console.log(questionNumber)
       console.log(questionPosition)
         
+
+      survey
+          .onComplete
+          .add(function (result) {
+              document
+                  .querySelector('#surveyResult')
+                  .textContent = "Result JSON:\n" + JSON.stringify(result.data, null, 3);
+          });
+
       if (questionPosition === 'pre') {
 
         /* Before submitting pre-exchange question response, we must first
@@ -90,3 +99,72 @@ $(document).ready(function() {
   }); // Close of the done() callback for experiment config, which was 
       // necessary to have for all steps, so had to be in the callback.
 });
+
+
+/**
+ * Given the question asked for this trial, set up the questionnaire.
+ *
+ * Adapted from surveyjs.io example: 
+ * https://surveyjs.io/Examples/Library?id=bootstrap-material-theme&platform=jQuery&theme=modern#content-js
+ *
+ */
+var setupSurvey = function(question) {
+// var setupSurvey = function() {
+  // Initialize Bootstrap Material theme, used by SurveyJS example I
+  // liked and adapted.
+  $.material.init();
+
+  Survey.defaultBootstrapMaterialCss.navigationButton = "btn btn-green";
+  Survey.defaultBootstrapMaterialCss.rating.item = "btn btn-default my-rating";
+  Survey.StylesManager.applyTheme("bootstrapmaterial");
+
+  var surveyInfo = {
+      pages: [
+          {
+              questions: [
+                  {
+                      type: "matrix",
+                      name: "surveyQuestion",
+                      title: "Please indicate if you agree or disagree with the following statement<br/>" + question,
+                      columns: [
+                          {
+                              value: -3,
+                              text: "Strongly Disagree"
+                          }, {
+                              value: -2,
+                              // text: ""
+                              text: "Disagree"
+                          }, {
+                              value: -1,
+                              // text: ""
+                              text: "Somewhat disagree"
+                          }, {
+                              value: 0,
+                              text: "Neutral"
+                          }, {
+                              value: 1,
+                              // text: ""
+                              text: "Somewhat agree"
+                          }, {
+                              value: 2,
+                              // text: ""
+                              text: "Agree"
+                          }, {
+                              value: 3,
+                              text: "Strongly agree"
+                          },
+                      ],
+                      rows: [
+                          {
+                              value: "value",
+                              // text: question
+                              text: " "
+                          }
+              ]}]}]};
+
+  var survey = new Survey.Model(surveyInfo);
+
+  $("#surveyElement").Survey({model: survey});
+
+  return survey;
+};

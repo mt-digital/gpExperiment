@@ -1,62 +1,63 @@
 {% extends "layout.html" %}
 
-{% block body %}
-    <!-- {{ super() }} -->
-    <div class="main_div">
-        <div class="row question">
-            <div class="col-md-8">
-                <p id="question"></p>
-            </div>
-            <div class="col-md-4">
-            <form>
-                <div class="row">
-                    <div class="col">
-                        <input type="radio" 
-                               id="response-3"
-                               name="response"
-                               value="-3">
-                        <label for="response-3">-3, Very few</label>
-                    </div>
-                    <div class="col">
-                        <input type="radio" 
-                               id="response3"
-                               name="response"
-                               value="3">
-                        <label for="response3">3, Very many</label>
-                    </div>
-                </div>
-            </form>
-             <button type="button" id="submit-answer" 
-                     class="btn btn-primary btn-lg continue">
-                Continue
-            </button>
-            </div>
-        </div>
 
-        <div id="progress-container" style="display:none">
-            <p>
-                This is a multiplayer experiment and so you must wait for the 
-                other players to join.
-            </p>
-            <div class="col-md-4">
-                <div class="progress progress-striped active">
-                    <div id="waiting-progress-bar" class="progress-bar progress-bar-success" 
-                         role="progressbar" aria-valuenow="0" aria-valuemin="0" 
-                          aria-valuemax="100" style="width: 0%;">
-                      <span id="progress-percentage">0%</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <button id="not-needed-exit" style="display:none" class="btn btn-danger">
-            Finish participation
-        </button>
-
-    </div>
+{% block head %}
+    <meta name="viewport" content="width=device-width"/>
+    <link rel="stylesheet" href="/static/css/surveyQuestion.css">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@0.5.10/dist/css/bootstrap-material-design.css">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@0.5.10/dist/css/ripples.css">
+    {{ super() }}
 {% endblock %}
 
+
+{% block body %}
+<!-- <div class="container"> -->
+    
+    <!-- Filled in by static/scripts/surveyQuestion.js -->
+    <div class="row"><p id="question"></p></div>
+
+
+    <!-- Filled in by SurveyJS -->
+    <div id="surveyElement" style="display:inline-block;width:100%;"></div>
+    <!-- <div id="surveyResult"></div> -->
+
+
+    <!-- Progress bar displayed once question is answered and quorum is
+         being met 
+    -->
+    <div id="progress-container" style="display:none">
+        <p>
+            This is a multiplayer experiment and so you must wait for the 
+            other players to join.
+        </p>
+        <div class="col-md-4">
+            <div class="progress progress-striped active">
+                <div id="waiting-progress-bar" class="progress-bar progress-bar-success" 
+                     role="progressbar" aria-valuenow="0" aria-valuemin="0" 
+                      aria-valuemax="100" style="width: 0%;">
+                  <span id="progress-percentage">0%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button id="not-needed-exit" style="display:none" class="btn btn-danger">
+        Finish participation
+    </button>
+
+<!-- </div> -->
+{% endblock %}
+
+
 {% block scripts %}
-    <script src="/static/scripts/surveyQuestion.js" type="text/javascript"></script>
     {{ super() }}
+    <script src="https://unpkg.com/jquery"></script>
+
+    <script src="https://surveyjs.azureedge.net/1.7.4/survey.jquery.js"></script>
+
+    <script src="https://unpkg.com/bootstrap-material-design@0.5.10/dist/js/material.js"></script>
+    <script src="https://unpkg.com/bootstrap-material-design@0.5.10/dist/js/ripples.js"></script>
+
+    <script src="/static/scripts/surveyQuestion.js" type="text/javascript"></script>
 {% endblock %}
