@@ -2,7 +2,7 @@
 
 /* exported createAgent */
 
-var MY_NODE_ID;
+var MY_NODE_ID, DISCUSSION_DURATION, FIRST_COMM_TIME;
 
 /**
  * Get current transmissions for this agent and initiate an infinite recursive
@@ -19,14 +19,65 @@ var MY_NODE_ID;
 var loadTransmissions = function(MY_NODE_ID) {
 
   // Fetch 'pending' transmissions that have not yet been requested.
-  dallinger.getTransmissions(MY_NODE_ID, { status: 'pending' }).done(resp => {
-    
+  // dallinger.getTransmissions(MY_NODE_ID, { status: 'pending' }).done((tr_resp) => {
+  dallinger.getTransmissions(MY_NODE_ID, { status: 'pending' }).done((trResp) => {
+
     // Iterate over transmissions received, display each one.
-    resp.transmissions.forEach(t => displayTransmission(t.info_id));
+    var transmissions = trResp.transmissions;
+
+    if (typeof FIRST_COMM_TIME === 'undefined' && transmissions.length > 0) {
+      FIRST_COMM_TIME = Date.parse(transmissions[0].creation_time);
+    }
+    
+    transmissions.forEach(t => displayTransmission(t.info_id));
 
     // Repeat request-display loop every 100ms.
-    setTimeout(() => loadTransmissions(MY_NODE_ID), 100);
-  });
+    setTimeout(() => {
+
+      loadTransmissions(MY_NODE_ID);
+
+      // Not ideal to have to do this every time, but good enough for now.
+      // I don't see a better, easy spot to put this so that the timer starts
+      // with the first statement made.
+      // var startTime = getFirstInfoTime();
+      dallinger.getInfos(MY_NODE_ID).done((infos_resp) => {
+
+        var infos = infos_resp.infos;
+        if (typeof FIRST_COMM_TIME === 'undefined' && infos.length > 0) {
+          FIRST_COMM_TIME = Date.parse(infos[0].creation_time);
+        }
+        
+        closeIfAtDuration();
+      });
+
+      }, 
+      // Set timeout to 100ms.
+      100
+    );
+
+  }); // end of getTransmissions done callback.
+
+};
+
+
+var closeIfAtDuration = function() {
+  
+  var elapsed;
+  if (FIRST_COMM_TIME !== 'undefined') {
+    var currentTime = Date.now();
+    elapsed = currentTime - FIRST_COMM_TIME;
+  } else {
+    elapsed = 0.0;
+  }
+
+  $("#timer").html(
+    Math.ceil(elapsed / 1000) + " of " + DISCUSSION_DURATION + " seconds complete"
+  );
+
+  // Elapsed is in ms, duration is in s.
+  if (elapsed > DISCUSSION_DURATION * 1000) {
+    util.goToPage('survey_question?position=post&number=1');
+  }
 
 };
 
@@ -116,7 +167,12 @@ $(document).keypress(function (e) {
 
 
 $(document).ready(function() {
-    
+
+  // Fetch the discussion duration. 
+  dallinger.getExperimentProperty("discussion_duration").done((r) => {
+    DISCUSSION_DURATION = r.discussion_duration;
+  });
+  
   // Proceed to the waiting room listener.
   $("#go-to-waiting-room").click(function() {
     util.goToPage("waiting");
