@@ -63,16 +63,20 @@ var loadTransmissions = function(MY_NODE_ID) {
 var closeIfAtDuration = function() {
   
   var elapsed;
-  if (FIRST_COMM_TIME !== 'undefined') {
+  if (typeof FIRST_COMM_TIME !== 'undefined') {
+
     var currentTime = Date.now();
     elapsed = currentTime - FIRST_COMM_TIME;
+    $("#timer").html(
+      Math.floor(elapsed / 1000) + " of " + DISCUSSION_DURATION + " seconds complete"
+    );
   } else {
-    elapsed = 0.0;
+
+    $("#timer").html(
+      "0 of " + DISCUSSION_DURATION + " seconds complete"
+    );
   }
 
-  $("#timer").html(
-    Math.ceil(elapsed / 1000) + " of " + DISCUSSION_DURATION + " seconds complete"
-  );
 
   // Elapsed is in ms, duration is in s.
   if (elapsed > DISCUSSION_DURATION * 1000) {
@@ -171,7 +175,12 @@ $(document).ready(function() {
   // Fetch the discussion duration. 
   dallinger.getExperimentProperty("discussion_duration").done((r) => {
     DISCUSSION_DURATION = r.discussion_duration;
+    $("#timer").html(
+      "0 of " + DISCUSSION_DURATION + " seconds complete"
+    );
   });
+
+
   
   // Proceed to the waiting room listener.
   $("#go-to-waiting-room").click(function() {
