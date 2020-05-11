@@ -3,7 +3,7 @@ mode = sandbox
 auto_recruit = true
 network = FullyConnected
 repeats = 1
-n = 4
+n = 2
 question = The response of the United States federal government (the Trump administration) to the COVID-19 pandemic has been appropriate. 
 discussion_duration = 15  
 

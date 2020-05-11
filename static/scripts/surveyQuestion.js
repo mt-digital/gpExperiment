@@ -93,7 +93,7 @@ $(document).ready(function() {
             number: questionNumber,
             response: answerValue
           }
-        ).done(() => dallinger.goToPage('questionnaire'));
+        ).done(() => util.goToPage('questionnaire'));
       }
     });
   }); // Close of the done() callback for experiment config, which was 
