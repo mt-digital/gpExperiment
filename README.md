@@ -38,7 +38,7 @@ than Questions in the Dallinger database.
 
 To begin, let's analyze the survey questionnaire implementation. First, how
 do participants get to the questionnaire page? In the chat page they click
-``Leave chatroom,'' which ends this experiment. This button click is listened
+"Leave chatroom," which ends this experiment. This button click is listened
 for in `experiment.js` and handled by the following code
 
 ```js
@@ -185,7 +185,7 @@ var send_message = function() {
 ## The adaptation
 
 After some initial exploration of the chatroom structure, reviewed above,
-I was able to insert a pre- and post-discussion ``survey question'' in the
+I was able to insert a pre- and post-discussion "survey question" in the
 experiment flow. I refactored `experiment.js`, and renamed it `discussion.js`.
 In this way I began the process of modularization. There is now a
 `surveyQuestion.js` in `static/scripts` and accompanying 
